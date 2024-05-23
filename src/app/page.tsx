@@ -1,112 +1,133 @@
-import Image from "next/image";
+'use client'
+
+import DetailsModal from "@/components/DetailsModal";
+import { Check, DotsThree, Info, Plus, Trash, X } from "@phosphor-icons/react/dist/ssr";
+import { FormEvent, useState } from "react";
+
+interface Task {
+  id: number;
+  title: string;
+  description: string;
+  completed: boolean;
+}
 
 export default function Home() {
+  const [taskTitle, setTaskTitle] = useState<string>('');
+  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const handleAddTask = (event: FormEvent, { title, description }: { title: string, description: string }) => {
+    event.preventDefault();
+
+    if (!title.trim()) return;
+
+    const newTask: Task = {
+      id: taskList.length + 1,
+      title,
+      description,
+      completed: false,
+    };
+
+    setTaskTitle('');
+    setTaskList([...taskList, newTask]);
+  }
+
+  const handleEditTask = (id: number, { title, description }: { title: string, description: string }) => {
+    setTaskList(taskList.map((task) => {
+      if (task.id === id) {
+        task.title = title;
+        task.description = description;
+      }
+      return task;
+    }));
+  }
+
+  const toggleTaskStatus = (id: number) => {
+    setTaskList(taskList.map((task) => {
+      if (task.id === id) {
+        task.completed = !task.completed;
+      }
+      return task;
+    }));
+  }
+
+  const handleDeleteTask = (id: number) => {
+    setTaskList(taskList.filter((task) => task.id !== id));
+    setIsModalOpen(false);
+  }
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="flex flex-col items-center justify-center w-screen h-screen bg-slate-200 dark:bg-zinc-900">
+      <div className="flex flex-col items-center justify-start gap-2 p-4 dark:border-gray-900 min-h-80 min-w-[32rem]">
+        <h1 className="text-2xl font-medium text-center text-slate-900 dark:text-cyan-500">grand to do</h1>
+
+        <form
+          className="flex flex-row items-center justify-center w-full p-4 gap-2"
+          onSubmit={(event: FormEvent) => handleAddTask(event, { title: taskTitle, description: '' })}
+        >
+          <input
+            type="text"
+            className="bg-slate-100 dark:bg-zinc-800 border dark:border-t-zinc-600 dark:border-r-zinc-700 dark:border-l-zinc-700 dark:border-b-zinc-700 outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-800 focus:ring-gray-600 rounded-md py-2 px-3 w-full transition-all"
+            placeholder="New task"
+            value={taskTitle}
+            onChange={(e) => setTaskTitle(e.target.value)}
+          />
+          <button
+            className="bg-cyan-500 dark:bg-cyan-800 hover:bg-cyan-600 dark:hover:bg-cyan-900 border dark:border-t-cyan-600 dark:border-r-cyan-700 dark:border-l-cyan-600 dark:border-b-cyan-700 outline-none rounded-full p-2 active:brightness-90 transition-all"
+            type="submit"
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+            <Plus className="w-6 h-6 text-slate-900 dark:text-zinc-200" weight="regular" />
+          </button>
+        </form>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+        <ul className="flex flex-col items-center justify-start w-full p-4 gap-2">
+          {taskList.map((task) => (
+            <>
+              <DetailsModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                id={task.id}
+                title={task.title}
+                description={task.description}
+                onEditTask={handleEditTask}
+                onDeleteTask={handleDeleteTask}
+              />
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+              <li className="flex flex-row items-center justify-between w-full px-4 py-3 bg-slate-100 dark:bg-zinc-800 border dark:border-t-zinc-600 dark:border-r-zinc-700 dark:border-l-zinc-700 dark:border-b-zinc-700 rounded-md">
+                <div className="flex flex-row items-center justify-start gap-3">
+                  <button
+                    className={`${task.completed ? "bg-emerald-500 dark:bg-emerald-800 hover:bg-emerald-600 dark:hover:bg-emerald-900 text-slate-900 dark:text-zinc-200" : "text-emerald-700 dark:text-emerald-500"} border-2 dark:border-t-emerald-600 dark:border-r-emerald-700 dark:border-l-emerald-600 dark:border-b-emerald-700 outline-none rounded-full p-1 active:brightness-90 transition-all`}
+                    onClick={() => toggleTaskStatus(task.id)}
+                  >
+                    <Check className="w-4 h-4" weight="bold" />
+                  </button>
+                  <div className="flex flex-col items-start justify-start gap-0">
+                    <h4 className={`text-lg font-normal text-slate-900 dark:text-gray-100 ${task.completed && "opacity-50 line-through"}`}>{task.title}</h4>
+                    <span className={`text-sm font-normal text-slate-500 dark:text-gray-400 ${task.completed && "opacity-50 line-through"}`}>{task.description}</span>
+                  </div>
+                </div>
+                <div className="flex flex-row items-center justify-center gap-1">
+                  <button
+                    className="text-slate-900 dark:text-zinc-200 p-2 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 active:brightness-90 transition-all"
+                    onClick={handleOpenModal}
+                  >
+                    <DotsThree className="w-6 h-6 text-slate-900 dark:text-zinc-200" weight="regular" />
+                  </button>
+                  <button
+                    className="text-slate-900 dark:text-zinc-200 p-2 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 active:brightness-90 transition-all"
+                    onClick={() => handleDeleteTask(task.id)}
+                  >
+                    <Trash className="w-6 h-6 text-slate-900 dark:text-zinc-200" weight="regular" />
+                  </button>
+                </div>
+              </li>
+            </>
+          ))}
+        </ul>
       </div>
     </main>
   );
