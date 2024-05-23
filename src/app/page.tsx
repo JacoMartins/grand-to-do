@@ -62,7 +62,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-center w-screen h-screen bg-slate-200 dark:bg-zinc-900">
-      <div className="flex flex-col items-center justify-start gap-2 p-4 dark:border-gray-900 min-h-80 min-w-[32rem]">
+      <div className="flex flex-col items-center justify-start gap-2 p-4 dark:border-gray-900 min-h-80 lg:min-w-[32rem]">
         <h1 className="text-2xl font-medium text-center text-slate-900 dark:text-cyan-500">grand to do</h1>
 
         <form
@@ -71,7 +71,7 @@ export default function Home() {
         >
           <input
             type="text"
-            className="bg-slate-100 dark:bg-zinc-800 border dark:border-t-zinc-600 dark:border-r-zinc-700 dark:border-l-zinc-700 dark:border-b-zinc-700 outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-800 focus:ring-gray-600 rounded-md py-2 px-3 w-full transition-all"
+            className="bg-slate-100 dark:bg-zinc-800 border dark:border-t-zinc-600 dark:border-r-zinc-700 dark:border-l-zinc-700 dark:border-b-zinc-700 outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-200 focus:ring-cyan-600 dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-offset-zinc-800 dark:focus:ring-gray-600 rounded-md py-2 px-3 w-full transition-all"
             placeholder="New task"
             value={taskTitle}
             onChange={(e) => setTaskTitle(e.target.value)}
@@ -100,7 +100,7 @@ export default function Home() {
               <li className="flex flex-row items-center justify-between w-full px-4 py-3 bg-slate-100 dark:bg-zinc-800 border dark:border-t-zinc-600 dark:border-r-zinc-700 dark:border-l-zinc-700 dark:border-b-zinc-700 rounded-md">
                 <div className="flex flex-row items-center justify-start gap-3">
                   <button
-                    className={`${task.completed ? "bg-emerald-500 dark:bg-emerald-800 hover:bg-emerald-600 dark:hover:bg-emerald-900 text-slate-900 dark:text-zinc-200" : "text-emerald-700 dark:text-emerald-500"} border-2 dark:border-t-emerald-600 dark:border-r-emerald-700 dark:border-l-emerald-600 dark:border-b-emerald-700 outline-none rounded-full p-1 active:brightness-90 transition-all`}
+                    className={`${task.completed ? "bg-emerald-600 dark:bg-emerald-800 hover:bg-emerald-600 dark:hover:bg-emerald-900 text-slate-100 dark:text-zinc-200" : "text-emerald-700 dark:text-emerald-500"} border-2 border-t-emerald-600 border-r-emerald-700 border-l-emerald-600 border-b-emerald-700 dark:border-t-emerald-600 dark:border-r-emerald-700 dark:border-l-emerald-600 dark:border-b-emerald-700 outline-none rounded-full p-1 active:brightness-90 transition-all`}
                     onClick={() => toggleTaskStatus(task.id)}
                   >
                     <Check className="w-4 h-4" weight="bold" />
