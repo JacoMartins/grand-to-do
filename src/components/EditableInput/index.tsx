@@ -1,5 +1,6 @@
 import { Check, PencilSimple } from "@phosphor-icons/react/dist/ssr";
 import { FormEvent, MouseEvent, createRef, useState } from "react";
+import { InputHooks } from "./hooks";
 
 interface EditableInputProps {
   label: string;
@@ -8,9 +9,7 @@ interface EditableInputProps {
 }
 
 function EditableInput({ label, value, onChange }: EditableInputProps) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [inputValue, setInputValue] = useState(value);
-  const inputRef = createRef<HTMLInputElement>();
+  const { isEditing, inputValue, inputRef, setIsEditing, setInputValue } = InputHooks({value})
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -59,14 +58,14 @@ function EditableInput({ label, value, onChange }: EditableInputProps) {
         {
           isEditing ?
             <button
-              className='text-slate-900 dark:text-zinc-200 p-2 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 active:brightness-90 transition-all'
+              className='text-slate-900 dark:text-zinc-200 p-2 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 active:brightness-90 transition-all duration-250'
               type="submit"
             >
               <Check className="w-5 h-5 text-slate-900 dark:text-zinc-200" weight="regular" />
             </button>
             :
             <button
-              className='text-slate-900 dark:text-zinc-200 p-2 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 active:brightness-90 transition-all'
+              className='text-slate-900 dark:text-zinc-200 p-2 rounded-full bg-cyan-600 dark:bg-cyan-700 hover:brightness-95 dark:hover:bg-white/10 active:brightness-90 transition-all duration-250'
               type="button"
               onClick={handleEdit}
             >

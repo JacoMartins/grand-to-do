@@ -1,8 +1,7 @@
-import { Pencil } from '@phosphor-icons/react';
-import { PencilSimple, X } from '@phosphor-icons/react/dist/ssr';
-import { useState } from 'react';
+import { X } from '@phosphor-icons/react/dist/ssr';
 import ReactModal from 'react-modal';
-import EditableInput from './EditableInput';
+import EditableInput from '../EditableInput';
+import { EditableInputOuterHooks } from './hooks';
 
 interface DetailsModalProps {
   isOpen: boolean;
@@ -14,10 +13,9 @@ interface DetailsModalProps {
   onEditTask: (id: number, { title, description }: { title: string, description: string }) => void;
 }
 
-function DetailsModal({ isOpen, id, title, description, onClose, onDeleteTask, onEditTask}: DetailsModalProps) {
-  const [titleValue, setTitleValue] = useState<string>(title);
-  const [descriptionValue, setDescriptionValue] = useState<string>(description);
-
+function DetailsModal({ isOpen, id, title, description, onClose, onDeleteTask, onEditTask }: DetailsModalProps) {
+  const { titleValue, descriptionValue, setTitleValue, setDescriptionValue } = EditableInputOuterHooks({ title, description })
+  
   const handleEditChange = (value: string, key: string) => {
     if (key === 'title') {
       setTitleValue(value);
@@ -59,12 +57,7 @@ function DetailsModal({ isOpen, id, title, description, onClose, onDeleteTask, o
           />
         </div>
         <div className="flex flex-col items-start justify-start gap-2 w-full">
-          <button
-            className="bg-cyan-500 dark:bg-cyan-800 hover:bg-cyan-600 dark:hover:bg-cyan-900 border dark:border-t-cyan-600 dark:border-r-cyan-700 dark:border-l-cyan-600 dark:border-b-cyan-700 outline-none rounded-md py-2 px-2.5 active:brightness-90 transition-all w-full"
-            onClick={() => onDeleteTask(id)}
-          >
-            Delete Task
-          </button>
+          {/* Container for buttons and stuff */}
         </div>
       </div>
     </ReactModal>
